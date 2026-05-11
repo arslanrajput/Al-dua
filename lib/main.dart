@@ -99,6 +99,7 @@ class MyApp extends StatelessWidget {
             builder: (context, state) {
               return MaterialApp(
                 title: 'Sirate Mustaqeem',
+
                 debugShowCheckedModeBanner: false,
                 color: Colors.white,
                 theme: state.currentTheme,
