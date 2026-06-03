@@ -26,7 +26,7 @@ class _TabScaffoldState extends State<TabScaffold> {
   int _currentTabIndex = 0;
 
   bool _effectiveSolidForTab(int tabIndex) {
-    if (tabIndex == 0 || tabIndex == 4) return _solidStatusBar;
+    if (tabIndex == 0 || tabIndex == 3) return _solidStatusBar;
     return true;
   }
 
@@ -54,7 +54,7 @@ class _TabScaffoldState extends State<TabScaffold> {
     required double pixels,
   }) {
     if (tabIndex == 0) return pixels > 0.2.sh;
-    if (tabIndex == 4) return pixels > 40.h;
+    if (tabIndex == 3) return pixels > 40.h;
     return true;
   }
 
@@ -109,7 +109,7 @@ class _TabScaffoldState extends State<TabScaffold> {
             listenWhen: (previous, current) => previous.index != current.index,
             listener: (context, tabState) {
               _currentTabIndex = tabState.index;
-              final nextSolid = (_currentTabIndex == 0 || _currentTabIndex == 4)
+              final nextSolid = (_currentTabIndex == 0 || _currentTabIndex == 3)
                   ? _shouldUseSolidStatusBar(
                       tabIndex: _currentTabIndex,
                       pixels: 0,
@@ -118,7 +118,7 @@ class _TabScaffoldState extends State<TabScaffold> {
               if (nextSolid != _solidStatusBar) {
                 setState(() => _solidStatusBar = nextSolid);
               }
-              if (tabState.index != 2) {
+              if (tabState.index != 1) {
                 BlocProvider.of<QuranAudioBloc>(context)
                     .add(const StopAudio());
               }

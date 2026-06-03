@@ -53,7 +53,7 @@ class QuranScaffold extends StatelessWidget {
             onTap: () {
               if (!BlocProvider.of<QuranCubit>(context).state.fromNav)
                 Navigator.of(context).pop();
-              BlocProvider.of<btb.TabBloc>(context).add(btb.SetTab(3));
+              BlocProvider.of<btb.TabBloc>(context).add(btb.SetTab(2));
             },
             child: Padding(
               padding: EdgeInsets.symmetric(

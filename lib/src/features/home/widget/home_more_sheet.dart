@@ -21,20 +21,12 @@ void showHomeMoreSheet(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.search_rounded, color: HomeTheme.accent),
-                title: const Text('Search'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  BlocProvider.of<TabBloc>(context).add(const SetTab(1));
-                },
-              ),
-              ListTile(
                 leading: Icon(Icons.bookmark_outline_rounded,
                     color: HomeTheme.accent),
                 title: const Text('Bookmarks'),
                 onTap: () {
                   Navigator.pop(ctx);
-                  BlocProvider.of<TabBloc>(context).add(const SetTab(3));
+                  BlocProvider.of<TabBloc>(context).add(const SetTab(2));
                 },
               ),
               ListTile(
@@ -43,7 +35,7 @@ void showHomeMoreSheet(BuildContext context) {
                 title: const Text('Settings'),
                 onTap: () {
                   Navigator.pop(ctx);
-                  BlocProvider.of<TabBloc>(context).add(const SetTab(4));
+                  BlocProvider.of<TabBloc>(context).add(const SetTab(3));
                 },
               ),
             ],

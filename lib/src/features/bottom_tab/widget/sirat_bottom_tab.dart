@@ -42,23 +42,6 @@ class SiratNavigationBar extends StatelessWidget {
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/images/navigation_icon/svg/search.svg',
-                color: Theme.of(context)
-                    .bottomNavigationBarTheme
-                    .unselectedItemColor,
-                width: 24.sp,
-              ),
-              label: 'Search',
-              activeIcon: SvgPicture.asset(
-                'assets/images/navigation_icon/svg/search.svg',
-                color: Theme.of(context)
-                    .bottomNavigationBarTheme
-                    .selectedItemColor,
-                width: 24.sp,
-              ),
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
                 'assets/images/navigation_icon/svg/quran_nfill.svg',
                 width: 24.sp,
                 color: Theme.of(context)

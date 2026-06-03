@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../bottom_tab/bloc/tab/tab_bloc.dart';
+import '../../search/screen/search_screen.dart';
 import '../theme/azkar_theme.dart';
 
 class AzkarSearchFooter extends StatelessWidget {
@@ -56,17 +55,8 @@ class AzkarSearchFooter extends StatelessWidget {
   }
 
   void _openSearch(BuildContext context) {
-    try {
-      context.read<TabBloc>().add(SetTab(1));
-      if (Navigator.canPop(context)) {
-        Navigator.of(context).pop();
-      }
-    } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Open Search from the bottom navigation bar.'),
-        ),
-      );
-    }
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SearchScreen()),
+    );
   }
 }

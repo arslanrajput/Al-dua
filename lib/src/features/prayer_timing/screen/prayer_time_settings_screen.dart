@@ -11,9 +11,10 @@ import '../../../core/util/bloc/prayer_time_config/prayer_time_config_bloc.dart'
 import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/constants.dart';
 import '../../../core/util/model/madhab_type.dart';
-import '../../../core/util/model/prayer_notification_id.dart';
+import '../../setting/theme/setting_theme.dart';
 import '../../utils/bottom_sheet_select.dart';
-import '../widget/exact_alarm_permission_card.dart';
+import '../theme/prayer_timing_theme.dart';
+import '../widget/azan_notification_settings.dart';
 import '../widget/madhab_selection_card.dart';
 
 class PrayerTimeSettingsScreen extends StatelessWidget {
@@ -102,8 +103,17 @@ class PrayerTimeSettingsScreen extends StatelessWidget {
         );
       },
       child: Scaffold(
+      backgroundColor: PrayerTimingTheme.screenBg(context),
       appBar: AppBar(
-        title: const Text('Prayer time settings'),
+        backgroundColor: PrayerTimingTheme.screenBg(context),
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: Text(
+          'Prayer time settings',
+          style: SettingTheme.appBarTitleStyle(context),
+        ),
+        iconTheme: IconThemeData(color: SettingTheme.primaryText(context)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -112,12 +122,15 @@ class PrayerTimeSettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16.h),
+                SizedBox(height: 8.h),
+                Text(
+                  'CALCULATION',
+                  style: PrayerTimingTheme.sectionLabelStyle(context),
+                ),
+                SizedBox(height: 8.h),
                 Text(
                   'Madhab',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                  style: SettingTheme.sectionTitleStyle(context),
                 ),
                 SizedBox(height: 8.h),
                 Text(
@@ -207,72 +220,11 @@ class PrayerTimeSettingsScreen extends StatelessWidget {
                     );
                   },
                 ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Azan notifications',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                SizedBox(height: 24.h),
+                AzanNotificationSettings(
+                  onChanged: () => _rescheduleOnly(context),
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  'Enable reminders for each prayer. Times use your GPS location.',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                SizedBox(height: 8.h),
-                ExactAlarmPermissionCard(
-                  onPermissionChanged: () => _rescheduleOnly(context),
-                ),
-                BlocBuilder<PrayerNotificationBloc, PrayerNotificationState>(
-                  builder: (context, notifState) {
-                    return Column(
-                      children: [
-                        for (final prayer in PrayerNotificationId.values)
-                          SwitchListTile(
-                            title: Text(prayer.prayerName),
-                            value: notifState.isEnabled(prayer),
-                            onChanged: (value) {
-                              BlocProvider.of<PrayerNotificationBloc>(context)
-                                  .add(SetPrayerNotificationEnabled(
-                                prayer,
-                                value,
-                              ));
-                              _rescheduleOnly(context);
-                            },
-                          ),
-                        const Divider(),
-                        SwitchListTile(
-                          title: const Text('Play Azan sound'),
-                          subtitle: const Text(
-                            'Plays Azan when a prayer notification fires',
-                          ),
-                          value: notifState.azanSoundEnabled,
-                          onChanged: (value) {
-                            BlocProvider.of<PrayerNotificationBloc>(context)
-                                .add(SetAzanSoundEnabled(value));
-                            _rescheduleOnly(context);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                BlocBuilder<NotificationBloc, NotificationState>(
-                  builder: (context, globalState) {
-                    if (globalState.status != PermissionStatus.granted) {
-                      return Padding(
-                        padding: EdgeInsets.only(top: 8.h, bottom: 16.h),
-                        child: Text(
-                          'Turn on notifications in Settings to receive Azan alerts.',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.error,
-                              ),
-                        ),
-                      );
-                    }
-                    return SizedBox(height: 16.h);
-                  },
-                ),
+                SizedBox(height: 24.h),
               ],
             ),
           ),
@@ -300,7 +252,6 @@ class _StepSettingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final canDecrement = value > min;
     final canIncrement = value < max;
 
@@ -312,24 +263,23 @@ class _StepSettingRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: theme.textTheme.titleLarge!.copyWith(
-                color: theme.primaryColor,
-              ),
+              style: SettingTheme.tileTitleStyle(context),
             ),
           ),
           IconButton(
             onPressed: canDecrement ? () => onChanged(value - 1) : null,
-            icon: Icon(Icons.remove, color: theme.primaryColor),
+            icon: Icon(Icons.remove, color: kBrandLogoGreen),
           ),
           Text(
             value.toString(),
-            style: theme.textTheme.bodyMedium!.copyWith(
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               fontWeight: FontWeight.bold,
+              color: SettingTheme.primaryText(context),
             ),
           ),
           IconButton(
             onPressed: canIncrement ? () => onChanged(value + 1) : null,
-            icon: Icon(Icons.add, color: theme.primaryColor),
+            icon: Icon(Icons.add, color: kBrandLogoGreen),
           ),
         ],
       ),

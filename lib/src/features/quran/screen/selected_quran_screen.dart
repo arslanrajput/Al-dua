@@ -52,7 +52,7 @@ class SelectedQuranScreen extends StatelessWidget {
               if (!BlocProvider.of<qc.QuranCubit>(context).state.fromNav)
                 Navigator.of(context).pop();
               Navigator.of(context).pop();
-              BlocProvider.of<TabBloc>(context).add(SetTab(3));
+              BlocProvider.of<TabBloc>(context).add(SetTab(2));
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
