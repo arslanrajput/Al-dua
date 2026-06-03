@@ -49,15 +49,11 @@ class NotificationPermissionScreen extends StatelessWidget {
               ),
               CustomElevatedButton(
                 onPressed: () async {
-                  if (await Permission.notification.request().isGranted) {
-                    Navigator.of(context).pushReplacementNamed(
-                      RouteGenerator.tabScreen,
-                    );
-                  } else {
-                    Navigator.of(context).pushReplacementNamed(
-                      RouteGenerator.tabScreen,
-                    );
-                  }
+                  await Permission.notification.request();
+                  if (!context.mounted) return;
+                  Navigator.of(context).pushReplacementNamed(
+                    RouteGenerator.tabScreen,
+                  );
                 },
                 text: 'Sure, I like that',
               ),

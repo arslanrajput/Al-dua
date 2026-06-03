@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/util/constants.dart';
 import '../../../core/util/model/dua.dart';
 import '../bloc/dropdown/dropdown_bloc.dart';
+import '../theme/dua_theme.dart';
 import 'dua_card.dart';
 
 class DuaCategoryCard extends StatelessWidget {
@@ -16,70 +16,76 @@ class DuaCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = DuaTheme.primaryText(context);
+
     return Column(
       children: [
-        GestureDetector(
-          onTap: () {
-            BlocProvider.of<DropdownBloc>(context).add(
-              ToggleDropdown(),
-            );
-          },
-          child: Container(
-            width: double.infinity,
-            margin: kPagePadding,
-            padding: kCardPadding,
-            decoration: BoxDecoration(
-              borderRadius: kCardBorderRadius,
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.2),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 28.w,
-                  height: 28.w,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 4.w,
-                    horizontal: 8.w,
-                  ),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor,
-                      width: 2.sp,
-                    ),
-                  ),
-                  child: FittedBox(
-                    child: Text(
-                      index.toString(),
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
+        Material(
+          color: DuaTheme.categoryBackground(context),
+          borderRadius: BorderRadius.circular(12.r),
+          elevation: 0,
+          child: InkWell(
+            onTap: () {
+              BlocProvider.of<DropdownBloc>(context).add(ToggleDropdown());
+            },
+            borderRadius: BorderRadius.circular(12.r),
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: DuaTheme.categoryBorder(context)),
+                boxShadow: DuaTheme.categoryCardShadow(context),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: DuaTheme.indexBadgeBackground(context),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        index.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    surah.key,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontFamily: 'Jameel',
-                          fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        child: Text(
+                          surah.key,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Jameel',
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.w700,
+                            color: primary,
+                            height: 1.25,
+                          ),
                         ),
-                  ),
+                      ),
+                    ),
+                    BlocBuilder<DropdownBloc, DropdownState>(
+                      builder: (context, state) {
+                        return Icon(
+                          state.expanded
+                              ? Icons.keyboard_arrow_up_rounded
+                              : Icons.keyboard_arrow_down_rounded,
+                          color: DuaTheme.chevronColor(context),
+                          size: 26.sp,
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                BlocBuilder<DropdownBloc, DropdownState>(
-                  builder: (context, state) {
-                    return SvgPicture.asset(
-                      state.expanded
-                          ? 'assets/images/dua_icon/svg/riseup.svg'
-                          : 'assets/images/dua_icon/svg/dropdown.svg',
-                      color: Theme.of(context).primaryColor,
-                      width: 24.w,
-                    );
-                  },
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -91,26 +97,19 @@ class DuaCategoryCard extends StatelessWidget {
               reverseDuration: Duration.zero,
               child: state.expanded
                   ? Column(
-                      children: List.generate(surah.value.length, (index) {
+                      children: List.generate(surah.value.length, (i) {
                         return Padding(
-                          padding: index == 0
-                              ? EdgeInsets.only(
-                                  top: 8.h,
-                                  bottom: 4.0.h,
-                                )
-                              : EdgeInsets.symmetric(
-                                  vertical: 4.0.h,
-                                ),
-                          child: DuaCard(
-                            surah.value[index],
+                          padding: EdgeInsets.only(
+                            top: i == 0 ? 10.h : 8.h,
                           ),
+                          child: DuaCard(surah.value[i]),
                         );
                       }),
                     )
-                  : Container(),
+                  : const SizedBox.shrink(),
             );
           },
-        )
+        ),
       ],
     );
   }

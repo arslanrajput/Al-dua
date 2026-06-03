@@ -9,4 +9,6 @@ abstract class NotificationEvent extends Equatable {
 
 class UpdateNotification extends NotificationEvent {}
 
+class SyncNotificationPermission extends NotificationEvent {}
+
 class ToggleNotification extends NotificationEvent {}

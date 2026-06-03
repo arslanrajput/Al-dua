@@ -1,30 +1,29 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:dchs_motion_sensors/dchs_motion_sensors.dart';
 import 'package:vector_math/vector_math.dart' show radians;
-
-import '../../controller/qibla_controller.dart';
 
 part 'angle_event.dart';
 part 'angle_state.dart';
 
 class AngleBloc extends Bloc<AngleEvent, AngleState> {
-  final double qiblaDirection;
+  /// Qibla bearing in degrees (0 = north, clockwise).
+  final double qiblaBearingDegrees;
 
-  AngleBloc(this.qiblaDirection) : super(AngleInitial(0, 0)) {
-    on<AngleEvent>((event, emit) async {
-      if (event is SetMagnetometerValue) {
-        double angle = getCompassAngle(event.events);
+  AngleBloc(this.qiblaBearingDegrees) : super(AngleInitial(0, 0)) {
+    on<AngleEvent>((event, emit) {
+      if (event is SetCompassHeading) {
+        final dialRadians = -radians(event.heading);
+        final qiblaRadians = radians(qiblaBearingDegrees);
 
-        double rad = radians(angle);
-
-        /// further prevent noise which is less than 0.5 deg(0.008 rad)
-        if (state.radian - rad > 0.008 || rad - state.radian > 0.008) {
-          emit(AngleLoaded(
-            angle: angle,
-            radian: rad,
-            qiblaDirection: radians(qiblaDirection),
-          ));
+        final delta = (state.radian - dialRadians).abs();
+        if (delta > 0.008) {
+          emit(
+            AngleLoaded(
+              angle: event.heading,
+              radian: dialRadians,
+              qiblaDirection: qiblaRadians,
+            ),
+          );
         }
       } else if (event is NotifyFailure) {
         emit(AngleFailed(0, 0));

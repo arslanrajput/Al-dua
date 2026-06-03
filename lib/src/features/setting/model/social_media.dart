@@ -18,11 +18,11 @@ final List<SocialMedia> socialMediaList = [
     name: 'Website',
     url: WEBSITE_URL,
   ),
-  SocialMedia(
+/*   SocialMedia(
     imagePath: 'assets/images/setting_icon/svg/email.svg',
     name: 'Email',
     url: EMAIL_URL,
-  ),
+  ), */
   SocialMedia(
     imagePath: 'assets/images/setting_icon/svg/medium.svg',
     name: 'Medium',

@@ -6,6 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'routes/routes.dart';
+import 'src/core/util/constants.dart';
 import 'src/core/notification/notification_service.dart';
 import 'src/core/util/bloc/allah_names/allah_name_bloc.dart';
 import 'src/core/util/bloc/database/database_bloc.dart';
@@ -13,12 +14,14 @@ import 'src/core/util/bloc/dua/dua_bloc.dart';
 import 'src/core/util/bloc/juz/juz_bloc.dart';
 import 'src/core/util/bloc/location/location_bloc.dart';
 import 'src/core/util/bloc/notification/notification_bloc.dart';
+import 'src/core/util/bloc/prayer_notification/prayer_notification_bloc.dart';
 import 'src/core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import 'src/core/util/bloc/prayer_time_config/prayer_time_config_bloc.dart';
 import 'src/core/util/bloc/quran/quran_bloc.dart';
 import 'src/core/util/bloc/quran_audio/quran_audio_bloc.dart';
 import 'src/core/util/bloc/surah/surah_bloc.dart';
 import 'src/core/util/bloc/tasbih/tasbih_bloc.dart';
+import 'src/core/bloc/language_bloc/language_bloc.dart';
 import 'src/core/util/bloc/theme/theme_bloc.dart';
 import 'src/core/util/bloc/time_format/time_format_bloc.dart';
 import 'src/features/bottom_tab/bloc/tab/tab_bloc.dart';
@@ -62,6 +65,9 @@ class MyApp extends StatelessWidget {
           create: (context) => PrayerTimeConfigBloc(),
         ),
         BlocProvider(
+          create: (context) => PrayerNotificationBloc(),
+        ),
+        BlocProvider(
           create: (context) => AllahNameBloc(),
         ),
         BlocProvider(
@@ -91,6 +97,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => LocationBloc(),
         ),
+        BlocProvider(
+          create: (context) => LanguageBloc(),
+        ),
       ],
       child: ScreenUtilInit(
         designSize: Size(414, 896),
@@ -98,7 +107,7 @@ class MyApp extends StatelessWidget {
           return BlocBuilder<ThemeBloc, ThemeState>(
             builder: (context, state) {
               return MaterialApp(
-                title: 'Sirate Mustaqeem',
+                title: kAppDisplayName,
 
                 debugShowCheckedModeBanner: false,
                 color: Colors.white,

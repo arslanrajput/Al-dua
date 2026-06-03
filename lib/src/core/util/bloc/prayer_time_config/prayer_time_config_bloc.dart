@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
+import '../../model/madhab_type.dart';
+
 part 'prayer_time_config_event.dart';
 part 'prayer_time_config_state.dart';
 
@@ -10,7 +12,7 @@ class PrayerTimeConfigBloc
       : super(
           const PrayerTimeConfigState(
             method: PrayerTimeMethod.mwl,
-            school: PrayerTimeSchool.shafi,
+            madhab: MadhabType.shafi,
             dayOffset: 0,
             hijriAdjustmentDays: 0,
           ),
@@ -18,8 +20,8 @@ class PrayerTimeConfigBloc
     on<PrayerTimeConfigEvent>((event, emit) async {
       if (event is SetPrayerTimeMethod) {
         emit(state.copyWith(method: event.method));
-      } else if (event is SetPrayerTimeSchool) {
-        emit(state.copyWith(school: event.school));
+      } else if (event is SetMadhab) {
+        emit(state.copyWith(madhab: event.madhab));
       } else if (event is SetPrayerDayOffset) {
         emit(state.copyWith(dayOffset: event.offset.clamp(0, 2)));
       } else if (event is SetHijriAdjustmentDays) {
@@ -27,7 +29,7 @@ class PrayerTimeConfigBloc
       } else if (event is ResetPrayerTimeConfig) {
         emit(const PrayerTimeConfigState(
           method: PrayerTimeMethod.mwl,
-          school: PrayerTimeSchool.shafi,
+          madhab: MadhabType.shafi,
           dayOffset: 0,
           hijriAdjustmentDays: 0,
         ));
@@ -39,18 +41,20 @@ class PrayerTimeConfigBloc
   PrayerTimeConfigState? fromJson(Map<String, dynamic> json) {
     try {
       final methodId = int.tryParse(json['methodId']?.toString() ?? '');
+      final madhabIndex = int.tryParse(json['madhabIndex']?.toString() ?? '');
       final schoolId = int.tryParse(json['schoolId']?.toString() ?? '');
       final dayOffset = int.tryParse(json['dayOffset']?.toString() ?? '') ?? 0;
       final hijriAdj =
           int.tryParse(json['hijriAdjustmentDays']?.toString() ?? '') ?? 0;
 
       final method = PrayerTimeMethodX.fromId(methodId) ?? PrayerTimeMethod.mwl;
-      final school =
-          PrayerTimeSchoolX.fromId(schoolId) ?? PrayerTimeSchool.shafi;
+      final madhab = MadhabTypeX.fromIndex(madhabIndex) ??
+          MadhabTypeX.fromLegacySchoolId(schoolId) ??
+          MadhabType.shafi;
 
       return PrayerTimeConfigState(
         method: method,
-        school: school,
+        madhab: madhab,
         dayOffset: dayOffset.clamp(0, 2),
         hijriAdjustmentDays: hijriAdj.clamp(0, 2),
       );
@@ -64,7 +68,7 @@ class PrayerTimeConfigBloc
     try {
       return {
         'methodId': state.method.id,
-        'schoolId': state.school.id,
+        'madhabIndex': state.madhab.index,
         'dayOffset': state.dayOffset,
         'hijriAdjustmentDays': state.hijriAdjustmentDays,
       };
@@ -127,39 +131,6 @@ extension PrayerTimeMethodX on PrayerTimeMethod {
     if (id == null) return null;
     for (final method in PrayerTimeMethod.values) {
       if (method.id == id) return method;
-    }
-    return null;
-  }
-}
-
-enum PrayerTimeSchool {
-  shafi,
-  hanafi,
-}
-
-extension PrayerTimeSchoolX on PrayerTimeSchool {
-  int get id {
-    switch (this) {
-      case PrayerTimeSchool.shafi:
-        return 0;
-      case PrayerTimeSchool.hanafi:
-        return 1;
-    }
-  }
-
-  String get label {
-    switch (this) {
-      case PrayerTimeSchool.shafi:
-        return 'Shafi';
-      case PrayerTimeSchool.hanafi:
-        return 'Hanafi';
-    }
-  }
-
-  static PrayerTimeSchool? fromId(int? id) {
-    if (id == null) return null;
-    for (final school in PrayerTimeSchool.values) {
-      if (school.id == id) return school;
     }
     return null;
   }

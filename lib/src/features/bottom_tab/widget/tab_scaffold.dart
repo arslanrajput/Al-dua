@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../../core/util/bloc/location/location_bloc.dart';
 import '../../../core/util/bloc/notification/notification_bloc.dart';
+import '../../../core/util/bloc/prayer_notification/prayer_notification_bloc.dart';
 import '../../../core/util/bloc/prayer_time_config/prayer_time_config_bloc.dart';
 import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/bloc/quran_audio/quran_audio_bloc.dart';
@@ -57,20 +58,24 @@ class _TabScaffoldState extends State<TabScaffold> {
     return true;
   }
 
-  @override
-  void didChangeDependencies() {
+  void _requestPrayerTimings() {
     final prayerConfig = BlocProvider.of<PrayerTimeConfigBloc>(context).state;
     BlocProvider.of<TimingBloc>(context).add(
       RequestTiming(
         BlocProvider.of<NotificationBloc>(context).state.status,
+        BlocProvider.of<PrayerNotificationBloc>(context).state,
         BlocProvider.of<LocationBloc>(context).state,
         prayerConfig.method.id,
-        prayerConfig.school.id,
+        prayerConfig.madhab.schoolId,
         prayerConfig.dayOffset,
         prayerConfig.hijriAdjustmentDays,
       ),
     );
+  }
 
+  @override
+  void didChangeDependencies() {
+    _requestPrayerTimings();
     super.didChangeDependencies();
   }
 

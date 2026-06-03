@@ -59,6 +59,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         elevation: WidgetStateProperty.all(0),
+        backgroundColor: WidgetStateProperty.all(kDarkPrimary),
         minimumSize: WidgetStateProperty.all(
           Size(double.infinity, 56.h),
         ),
@@ -176,6 +177,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         elevation: WidgetStateProperty.all(5),
+        backgroundColor: WidgetStateProperty.all(kLightPrimary),
         minimumSize: WidgetStateProperty.all(
           Size(double.infinity, 56.h),
         ),
@@ -183,7 +185,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
           const StadiumBorder(),
         ),
         foregroundColor: WidgetStateProperty.all(
-          kDarkTextColor,
+          Colors.white,
         ),
         textStyle: WidgetStateProperty.all(
           TextStyle(
@@ -209,7 +211,8 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
       elevation: 0,
       centerTitle: true,
       scrolledUnderElevation: 0,
-      backgroundColor: kDarkTextColor,
+      backgroundColor: kLightBg,
+      iconTheme: IconThemeData(color: kLightTextColor),
       titleTextStyle: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeight.bold,

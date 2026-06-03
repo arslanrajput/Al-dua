@@ -24,21 +24,21 @@ final List<GeneralOption> generalOptions = [
     imagePath: 'assets/images/collection_icon/svg/quran.svg',
     onTap: null,
     routeName: RouteGenerator.quranSettings,
-    title: 'Quran settings',
+    title: 'Quran Settings',
     subtitle: 'Customize Quran font, translation mode and styling.',
   ),
   GeneralOption(
-    imagePath: 'assets/images/home_icon/svg/fajr.svg',
+    imagePath: 'assets/images/collection_icon/svg/prayer_time.svg',
     onTap: null,
     routeName: RouteGenerator.prayerTimeSettings,
-    title: 'Prayer time settings',
-    subtitle: 'Configure calculation method, school and Hijri adjustment.',
+    title: 'Prayer Settings',
+    subtitle: 'Madhab, Azan notifications, calculation method and adjustments.',
   ),
   GeneralOption(
-    imagePath: 'assets/images/setting_icon/svg/thank.svg',
+    imagePath: 'assets/images/setting_icon/svg/donate.svg',
     onTap: null,
     routeName: RouteGenerator.thankyou,
-    title: 'Thank you',
+    title: 'Support the App',
     subtitle: 'These generous contributors helped make this app a reality!',
   ),
   GeneralOption(
@@ -47,22 +47,16 @@ final List<GeneralOption> generalOptions = [
       await launchURL(PLAY_STORE_URL);
     },
     title: 'Rate on App Store',
-    subtitle: 'Enjoy using \'Sirate Mustaqeem\'? '
+    subtitle: 'Enjoy using Al-Dua? '
         'Please leave a review to help other Muslims.',
   ),
   GeneralOption(
     imagePath: 'assets/images/setting_icon/svg/share.svg',
     onTap: () async {
       await onShare('Hey! Checkout this app '
-          'https://play.google.com/store/apps/details?id=com.devtechnologies.siratemustaqeem');
+          'https://play.google.com/store/apps/details?id=com.devtechnologies.aldua');
     },
     title: 'Share with a friend',
     subtitle: 'Tell others about the app with a link.',
-  ),
-  GeneralOption(
-    imagePath: 'assets/images/setting_icon/svg/donate.svg',
-    onTap: () {},
-    title: 'Support this project',
-    subtitle: 'Support \'Dev Technologies\' project to benifit other Muslims.',
   ),
 ];
