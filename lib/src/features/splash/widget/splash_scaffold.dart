@@ -19,14 +19,10 @@ class SplashScaffold extends StatelessWidget {
         await Future.delayed(const Duration(milliseconds: 750));
         if (state is DatabaseLoaded) {
           final locationPermission = await Permission.location.status;
-          final notificationPermission = await Permission.notification.status;
 
           if (!locationPermission.isGranted) {
             Navigator.of(context)
                 .pushReplacementNamed(RouteGenerator.locationPermission);
-          } else if (!notificationPermission.isGranted) {
-            Navigator.of(context)
-                .pushReplacementNamed(RouteGenerator.notificationPermission);
           } else {
             Navigator.of(context).pushReplacementNamed(RouteGenerator.tabScreen);
           }

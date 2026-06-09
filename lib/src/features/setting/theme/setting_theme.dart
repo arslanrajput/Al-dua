@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/util/constants.dart';
+import '../../../core/util/theme.dart';
 
 abstract class SettingTheme {
   SettingTheme._();
@@ -51,11 +52,10 @@ abstract class SettingTheme {
   }
 
   static TextStyle appBarTitleStyle(BuildContext context) {
-    return Theme.of(context).textTheme.titleLarge!.copyWith(
-          fontWeight: FontWeight.w700,
-          color: primaryText(context),
-          fontSize: 20.sp,
-        );
+    return appBarTitleTextStyle(
+      color: primaryText(context),
+      fontSize: 20.sp,
+    );
   }
 
   static TextStyle sectionTitleStyle(BuildContext context) {

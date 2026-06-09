@@ -7,6 +7,19 @@ import 'constants.dart';
 
 enum AppTheme { dark, light }
 
+/// AppBar titles use Poppins app-wide.
+TextStyle appBarTitleTextStyle({
+  required Color color,
+  double? fontSize,
+  FontWeight fontWeight = FontWeight.w700,
+}) {
+  return GoogleFonts.poppins(
+    fontSize: fontSize ?? 16.sp,
+    fontWeight: fontWeight,
+    color: color,
+  );
+}
+
 final Map<AppTheme, ThemeData> kAppThemeData = {
   AppTheme.dark: ThemeData.dark().copyWith(
     primaryColor: kDarkPrimary,
@@ -109,11 +122,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
       iconTheme: IconThemeData(
         color: kDarkTextColor,
       ),
-      titleTextStyle: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.bold,
-        color: kDarkTextColor,
-      ),
+      titleTextStyle: appBarTitleTextStyle(color: kDarkTextColor),
     ),
     colorScheme: ColorScheme.dark()
         .copyWith(
@@ -213,11 +222,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
       scrolledUnderElevation: 0,
       backgroundColor: kLightBg,
       iconTheme: IconThemeData(color: kLightTextColor),
-      titleTextStyle: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.bold,
-        color: kLightTextColor,
-      ),
+      titleTextStyle: appBarTitleTextStyle(color: kLightTextColor),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: kLightBg,

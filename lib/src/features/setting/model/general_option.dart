@@ -21,7 +21,7 @@ class GeneralOption {
 
 final List<GeneralOption> generalOptions = [
   GeneralOption(
-    imagePath: 'assets/images/collection_icon/svg/quran.svg',
+    imagePath: 'assets/images/collection_icon/svg/quran_up.svg',
     onTap: null,
     routeName: RouteGenerator.quranSettings,
     title: 'Quran Settings',
@@ -32,7 +32,7 @@ final List<GeneralOption> generalOptions = [
     onTap: null,
     routeName: RouteGenerator.prayerTimeSettings,
     title: 'Prayer Settings',
-    subtitle: 'Madhab, Azan notifications, calculation method and adjustments.',
+    subtitle: 'Madhab, calculation method and prayer time adjustments.',
   ),
   GeneralOption(
     imagePath: 'assets/images/setting_icon/svg/donate.svg',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/util/constants.dart';
+import '../../../core/util/theme.dart';
 import '../../home/theme/home_theme.dart';
 
 /// Dua list & card styling (Al-Dua mockup).
@@ -68,11 +69,10 @@ abstract class DuaTheme {
   }
 
   static TextStyle appBarTitleStyle(BuildContext context) {
-    return Theme.of(context).textTheme.titleLarge!.copyWith(
-          fontWeight: FontWeight.w700,
-          color: primaryText(context),
-          fontSize: 20.sp,
-        );
+    return appBarTitleTextStyle(
+      color: primaryText(context),
+      fontSize: 20.sp,
+    );
   }
 
   static List<BoxShadow> categoryCardShadow(BuildContext context) {

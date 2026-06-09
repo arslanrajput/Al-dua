@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:permission_handler/permission_handler.dart';
-
-import '../../../core/notification/notification_service.dart';
 import '../../../core/util/bloc/location/location_bloc.dart';
 import '../../../core/util/bloc/notification/notification_bloc.dart';
 import '../../../core/util/bloc/prayer_notification/prayer_notification_bloc.dart';
@@ -14,7 +11,6 @@ import '../../../core/util/model/madhab_type.dart';
 import '../../setting/theme/setting_theme.dart';
 import '../../utils/bottom_sheet_select.dart';
 import '../theme/prayer_timing_theme.dart';
-import '../widget/azan_notification_settings.dart';
 import '../widget/madhab_selection_card.dart';
 
 class PrayerTimeSettingsScreen extends StatelessWidget {
@@ -59,28 +55,6 @@ class PrayerTimeSettingsScreen extends StatelessWidget {
         effectiveMadhab.schoolId,
         dayOffset ?? config.dayOffset,
         hijriAdjustmentDays ?? config.hijriAdjustmentDays,
-      ),
-    );
-  }
-
-  Future<void> _rescheduleOnly(BuildContext context) async {
-    BlocProvider.of<NotificationBloc>(context)
-        .add(SyncNotificationPermission());
-    await Future.delayed(const Duration(milliseconds: 200));
-
-    final notificationStatus =
-        BlocProvider.of<NotificationBloc>(context).state.status;
-    final prayerNotifications =
-        BlocProvider.of<PrayerNotificationBloc>(context).state;
-
-    if (notificationStatus == PermissionStatus.granted) {
-      await NotificationService().ensureReady();
-    }
-
-    BlocProvider.of<TimingBloc>(context).add(
-      ReschedulePrayerNotifications(
-        notificationStatus,
-        prayerNotifications,
       ),
     );
   }
@@ -219,10 +193,6 @@ class PrayerTimeSettingsScreen extends StatelessWidget {
                       ],
                     );
                   },
-                ),
-                SizedBox(height: 24.h),
-                AzanNotificationSettings(
-                  onChanged: () => _rescheduleOnly(context),
                 ),
                 SizedBox(height: 24.h),
               ],

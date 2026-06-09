@@ -10,11 +10,9 @@ import '../widget/permission_page_layout.dart';
 class LocationPermissionScreen extends StatelessWidget {
   const LocationPermissionScreen({super.key});
 
-  Future<void> _goToNotifications(BuildContext context) async {
+  Future<void> _goToHome(BuildContext context) async {
     if (!context.mounted) return;
-    await Navigator.of(context).pushReplacementNamed(
-      RouteGenerator.notificationPermission,
-    );
+    await Navigator.of(context).pushReplacementNamed(RouteGenerator.tabScreen);
   }
 
   @override
@@ -38,10 +36,10 @@ class LocationPermissionScreen extends StatelessWidget {
         if (status.isGranted) {
           BlocProvider.of<LocationBloc>(context).add(InitLocation());
         }
-        await _goToNotifications(context);
+        await _goToHome(context);
       },
       secondaryButtonText: 'Not now',
-      onSecondaryPressed: () => _goToNotifications(context),
+      onSecondaryPressed: () => _goToHome(context),
     );
   }
 }

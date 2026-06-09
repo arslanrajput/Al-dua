@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../../../../core/util/controller/timing_controller.dart';
-import '../../../azan/azan_notification_scheduler.dart';
 import '../../../error/failures.dart';
 import '../../../notification/notification_service.dart';
 import '../../model/timing.dart';
@@ -16,17 +14,12 @@ part 'timing_state.dart';
 class TimingBloc extends Bloc<TimingEvent, TimingState> {
   /// storage for data to prevent unneccessary api call
   Timing? _timing;
-  PermissionStatus _notificationPermission = PermissionStatus.denied;
-  PrayerNotificationState _prayerNotificationSettings =
-      const PrayerNotificationState();
 
   /// constructor
   TimingBloc() : super(TimingInitial()) {
     on<TimingEvent>((event, emit) async {
       if (event is RequestTiming) {
         emit(TimingLoading());
-        _notificationPermission = event.notificationEnabled;
-        _prayerNotificationSettings = event.prayerNotificationSettings;
 
         if (!(event.locationState is LocationSuccess)) {
           emit(TimingFailed(event.locationState.failure!));
@@ -51,8 +44,6 @@ class TimingBloc extends Bloc<TimingEvent, TimingState> {
         }
       } else if (event is RequestTimingForTomorrow) {
         emit(TimingLoading());
-        _notificationPermission = event.notificationEnabled;
-        _prayerNotificationSettings = event.prayerNotificationSettings;
 
         if (!(event.locationState is LocationSuccess)) {
           emit(TimingFailed(event.locationState.failure!));
@@ -80,8 +71,6 @@ class TimingBloc extends Bloc<TimingEvent, TimingState> {
         await _scheduleFromTiming(timing);
         emit(TimingLoaded(timing));
       } else if (event is ReschedulePrayerNotifications) {
-        _notificationPermission = event.notificationEnabled;
-        _prayerNotificationSettings = event.prayerNotificationSettings;
         if (_timing != null) {
           await _scheduleFromTiming(_timing!);
         }
@@ -106,16 +95,7 @@ class TimingBloc extends Bloc<TimingEvent, TimingState> {
   }
 
   Future<void> _scheduleFromTiming(Timing timing) async {
-    if (_notificationPermission == PermissionStatus.restricted) {
-      await NotificationService().cancelPrayerNotifications();
-      return;
-    }
-
-    final controller = TimingController(timing.data.timings);
-    await AzanNotificationScheduler.reschedule(
-      timingsList: controller.timingsList,
-      settings: _prayerNotificationSettings,
-      globalNotificationStatus: _notificationPermission,
-    );
+    // Azan / prayer-time notifications are disabled — clear any legacy alarms.
+    await NotificationService().cancelPrayerNotifications();
   }
 }

@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:permission_handler/permission_handler.dart';
-
-import '../../../core/util/bloc/notification/notification_bloc.dart';
 import '../../../core/util/bloc/theme/theme_bloc.dart';
 import '../../../core/util/bloc/time_format/time_format_bloc.dart';
-import '../controller/setting_controller.dart';
 import '../theme/setting_theme.dart';
 import 'change_format_switch.dart';
-import 'change_notification_switch.dart';
 import 'change_theme_switch.dart';
 import 'preference_row.dart';
 
@@ -72,28 +67,13 @@ class UserPreferenceCard extends StatelessWidget {
                         iconPath: 'assets/images/home_icon/svg/fajr.svg',
                         title: 'Time Format',
                         subtitle: state.is24 ? '24-hour format' : '12-hour format',
+                        showDivider: false,
                         trailing: ChangeFormatSwitch(
                           value: state.is24,
                           onChanged: (_) {
                             BlocProvider.of<TimeFormatBloc>(context).add(
                               ToggleFormat(),
                             );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  BlocBuilder<NotificationBloc, NotificationState>(
-                    builder: (context, state) {
-                      return PreferenceRow(
-                        iconPath:
-                            'assets/images/setting_icon/svg/notification_outlined_enabled.svg',
-                        title: 'Notifications',
-                        showDivider: false,
-                        trailing: ChangeNotificationSwitch(
-                          value: state.status == PermissionStatus.granted,
-                          onChanged: (_) {
-                            notificationSwitchOnToggle(state, context);
                           },
                         ),
                       );

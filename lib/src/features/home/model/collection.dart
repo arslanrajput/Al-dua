@@ -14,7 +14,7 @@ List<Collection> collections(BuildContext context) {
   final l10n = AppLocalizations.of(context);
   return [
     Collection(
-      'assets/images/collection_icon/svg/quran.svg',
+      'assets/images/collection_icon/svg/quran_up.svg',
       (context) => l10n.quran,
       RouteGenerator.quran,
     ),

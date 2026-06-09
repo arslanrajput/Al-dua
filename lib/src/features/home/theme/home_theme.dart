@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/util/constants.dart';
+import '../../../core/util/theme.dart';
 
 /// Shared palette for the home screen (Al-Dua mockup).
 abstract class HomeTheme {
@@ -67,11 +68,10 @@ abstract class HomeTheme {
   }
 
   static TextStyle appTitleStyle(BuildContext context) {
-    return Theme.of(context).textTheme.headlineMedium!.copyWith(
-          fontSize: 26.sp,
-          fontWeight: FontWeight.w700,
-          color: primaryText(context),
-        );
+    return appBarTitleTextStyle(
+      color: primaryText(context),
+      fontSize: 26.sp,
+    );
   }
 
   static TextStyle scheduleTitleStyle(BuildContext context) {

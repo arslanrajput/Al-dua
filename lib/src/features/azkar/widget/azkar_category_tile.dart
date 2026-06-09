@@ -7,6 +7,7 @@ import '../../home/theme/home_theme.dart';
 import '../theme/azkar_theme.dart';
 import '../util/azkar_category_icon.dart';
 import '../screen/azkar_chapters_screen.dart';
+import 'azkar_language.dart';
 
 class AzkarCategoryTile extends StatelessWidget {
   const AzkarCategoryTile({
@@ -16,7 +17,7 @@ class AzkarCategoryTile extends StatelessWidget {
   });
 
   final AzkarCategory category;
-  final Language language;
+  final AzkarLanguage language;
 
   @override
   Widget build(BuildContext context) {

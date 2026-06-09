@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/util/bloc/allah_names/allah_name_bloc.dart';
+import '../../../core/util/theme.dart';
 import '../../home/theme/home_theme.dart';
 import '../../utils/loading_widget.dart';
 import '../theme/allah_name_theme.dart';
@@ -35,10 +36,10 @@ class AllahNameScreen extends StatelessWidget {
             iconTheme: IconThemeData(color: HomeTheme.primaryText(context)),
             title: Text(
               '99 Names',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: HomeTheme.primaryText(context),
-                  ),
+              style: appBarTitleTextStyle(
+                color: HomeTheme.primaryText(context),
+                fontSize: 20.sp,
+              ),
             ),
           ),
           body: SafeArea(

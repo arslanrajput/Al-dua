@@ -84,6 +84,9 @@ flutter:
     - assets/images/quran_icon/svg/
     - assets/images/image_of_the_day/
     - assets/sound/
+    - assets/azkar/urdu_overlay.json
+    - assets/azkar/urdu_by_arabic.json
+    - assets/azkar/chapter_en_to_ur.json
 
   fonts:
     - family: Uthman

@@ -1,0 +1,7 @@
+# Copy to key.properties and fill in values from Android Studio keystore creation.
+# key.properties is gitignored — do not commit passwords.
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+storeFile=../key/alDua-keystore.jks

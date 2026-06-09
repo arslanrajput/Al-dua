@@ -4,6 +4,7 @@ import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
 import '../../home/theme/home_theme.dart';
 import '../screen/azkar_chapters_screen.dart';
+import 'azkar_language.dart';
 
 class AzkarFeaturedCard extends StatelessWidget {
   const AzkarFeaturedCard({
@@ -14,7 +15,7 @@ class AzkarFeaturedCard extends StatelessWidget {
   });
 
   final AzkarCategory category;
-  final Language language;
+  final AzkarLanguage language;
   final String title;
 
   @override

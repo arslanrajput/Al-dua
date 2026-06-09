@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/util/constants.dart';
-import '../../../core/util/bloc/notification/notification_bloc.dart';
-import '../../../core/util/bloc/prayer_notification/prayer_notification_bloc.dart';
-import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/bloc/time_format/time_format_bloc.dart';
 import '../../../core/util/controller/timing_controller.dart';
-import '../../../core/util/model/prayer_notification_id.dart';
 import '../../home/theme/home_theme.dart';
 import '../theme/prayer_timing_theme.dart';
 
@@ -19,17 +14,11 @@ class TimingScheduleTile extends StatelessWidget {
     required this.name,
     required this.time,
     required this.isActive,
-    required this.enabled,
-    required this.azanSoundEnabled,
-    required this.onToggle,
   });
 
   final String name;
   final String time;
   final bool isActive;
-  final bool enabled;
-  final bool azanSoundEnabled;
-  final ValueChanged<bool> onToggle;
 
   IconData _iconForPrayer(String prayer) {
     switch (prayer.toLowerCase()) {
@@ -46,11 +35,6 @@ class TimingScheduleTile extends StatelessWidget {
       default:
         return Icons.schedule_rounded;
     }
-  }
-
-  String get _alertLabel {
-    if (!enabled) return 'Notification';
-    return azanSoundEnabled ? 'Adhan' : 'Notification';
   }
 
   @override
@@ -137,20 +121,6 @@ class TimingScheduleTile extends StatelessWidget {
                 ],
               ),
             ),
-            Text(
-              _alertLabel,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: muted,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(width: 8.w),
-            Switch.adaptive(
-              value: enabled,
-              onChanged: onToggle,
-              activeTrackColor: kLightPrimary.withValues(alpha: 0.45),
-              activeThumbColor: kLightPrimary,
-            ),
           ],
         ),
       ),
@@ -158,23 +128,3 @@ class TimingScheduleTile extends StatelessWidget {
   }
 }
 
-void togglePrayerNotification(BuildContext context, String prayerName, bool value) {
-  final prayer = PrayerNotificationId.fromPrayerName(prayerName);
-  if (prayer == null) return;
-
-  context.read<PrayerNotificationBloc>().add(
-        SetPrayerNotificationEnabled(prayer, value),
-      );
-
-  final notificationStatus = context.read<NotificationBloc>().state.status;
-  final prayerNotifications = context.read<PrayerNotificationBloc>().state;
-
-  if (notificationStatus == PermissionStatus.granted) {
-    context.read<TimingBloc>().add(
-          ReschedulePrayerNotifications(
-            notificationStatus,
-            prayerNotifications,
-          ),
-        );
-  }
-}

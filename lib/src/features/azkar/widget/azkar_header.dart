@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muslim_data_flutter/muslim_data_flutter.dart';
-
 import '../theme/azkar_theme.dart';
+import 'azkar_language.dart';
 import 'azkar_language_chip.dart';
 
 /// REMEMBRANCE label, page title, and language selector (mockup).
@@ -13,8 +12,8 @@ class AzkarHeader extends StatelessWidget {
     required this.onLanguageChanged,
   });
 
-  final Language language;
-  final ValueChanged<Language> onLanguageChanged;
+  final AzkarLanguage language;
+  final ValueChanged<AzkarLanguage> onLanguageChanged;
 
   @override
   Widget build(BuildContext context) {

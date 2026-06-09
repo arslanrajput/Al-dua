@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 import '../../../core/util/bloc/location/location_bloc.dart';
 import '../../../core/util/bloc/notification/notification_bloc.dart';
 import '../../../core/util/bloc/prayer_notification/prayer_notification_bloc.dart';
 import '../../../core/util/bloc/prayer_time_config/prayer_time_config_bloc.dart';
 import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/location_display.dart';
-import '../../../core/util/model/prayer_notification_id.dart';
 import '../../../core/util/model/timing.dart';
 import '../../home/theme/home_theme.dart';
 import '../../home/util/prayer_schedule_utils.dart';
@@ -68,7 +65,7 @@ class _SuccessWidgetState extends State<SuccessWidget> {
     context.read<TimingBloc>().add(
           RequestTiming(
             context.read<NotificationBloc>().state.status,
-            context.read<PrayerNotificationBloc>().state,
+            const PrayerNotificationState(),
             locationState,
             config.method.id,
             config.madhab.schoolId,
@@ -98,11 +95,11 @@ class _SuccessWidgetState extends State<SuccessWidget> {
     final nextIdx = next?.index ?? 0;
 
     final prayers = [
-      _PrayerItem('Fajr', timings.fajr, PrayerNotificationId.fajr),
-      _PrayerItem('Dhuhr', timings.dhuhr, PrayerNotificationId.dhuhr),
-      _PrayerItem('Asr', timings.asr, PrayerNotificationId.asr),
-      _PrayerItem('Maghrib', timings.maghrib, PrayerNotificationId.maghrib),
-      _PrayerItem('Isha', timings.isha, PrayerNotificationId.isha),
+      _PrayerItem('Fajr', timings.fajr),
+      _PrayerItem('Dhuhr', timings.dhuhr),
+      _PrayerItem('Asr', timings.asr),
+      _PrayerItem('Maghrib', timings.maghrib),
+      _PrayerItem('Isha', timings.isha),
     ];
 
     return BlocBuilder<LocationBloc, LocationState>(
@@ -111,78 +108,64 @@ class _SuccessWidgetState extends State<SuccessWidget> {
             ? cityCountryFromPlacemark(locState.placemark)
             : '';
 
-        return BlocBuilder<PrayerNotificationBloc, PrayerNotificationState>(
-          builder: (context, notifState) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (next != null)
+                TimingNextPrayerCard(
+                  next: next,
+                  viewingToday: _isToday,
+                ),
+              SizedBox(height: 20.h),
+              TimingCalendarStrip(
+                selectedDate: _selectedDate,
+                onDateSelected: _onDateSelected,
+                onPreviousWeek: () => _shiftWeek(-1),
+                onNextWeek: () => _shiftWeek(1),
+              ),
+              SizedBox(height: 22.h),
+              Row(
                 children: [
-                  if (next != null)
-                    TimingNextPrayerCard(
-                      next: next,
-                      viewingToday: _isToday,
+                  Expanded(
+                    child: Text(
+                      _isToday ? "TODAY'S SCHEDULE" : 'SCHEDULE',
+                      style: PrayerTimingTheme.sectionLabelStyle(context),
                     ),
-                  SizedBox(height: 20.h),
-                  TimingCalendarStrip(
-                    selectedDate: _selectedDate,
-                    onDateSelected: _onDateSelected,
-                    onPreviousWeek: () => _shiftWeek(-1),
-                    onNextWeek: () => _shiftWeek(1),
                   ),
-                  SizedBox(height: 22.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _isToday ? "TODAY'S SCHEDULE" : 'SCHEDULE',
-                          style: PrayerTimingTheme.sectionLabelStyle(context),
+                  if (location.isNotEmpty)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 14.sp,
+                          color: HomeTheme.mutedText(context),
                         ),
-                      ),
-                      if (location.isNotEmpty)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.location_on_outlined,
-                              size: 14.sp,
-                              color: HomeTheme.mutedText(context),
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              location,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: HomeTheme.mutedText(context),
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                            ),
-                          ],
+                        SizedBox(width: 4.w),
+                        Text(
+                          location,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: HomeTheme.mutedText(context),
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  for (int i = 0; i < prayers.length; i++)
-                    TimingScheduleTile(
-                      name: prayers[i].name,
-                      time: prayers[i].time,
-                      isActive: _isToday && i == nextIdx,
-                      enabled: notifState.isEnabled(prayers[i].id),
-                      azanSoundEnabled: notifState.azanSoundEnabled,
-                      onToggle: (value) => togglePrayerNotification(
-                        context,
-                        prayers[i].name,
-                        value,
-                      ),
+                      ],
                     ),
-                  SizedBox(height: 16.h),
-                  const TimingQuoteCard(),
                 ],
               ),
-            );
-          },
+              SizedBox(height: 12.h),
+              for (int i = 0; i < prayers.length; i++)
+                TimingScheduleTile(
+                  name: prayers[i].name,
+                  time: prayers[i].time,
+                  isActive: _isToday && i == nextIdx,
+                ),
+              SizedBox(height: 16.h),
+              const TimingQuoteCard(),
+            ],
+          ),
         );
       },
     );
@@ -190,9 +173,8 @@ class _SuccessWidgetState extends State<SuccessWidget> {
 }
 
 class _PrayerItem {
-  const _PrayerItem(this.name, this.time, this.id);
+  const _PrayerItem(this.name, this.time);
 
   final String name;
   final String time;
-  final PrayerNotificationId id;
 }

@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
+import '../../../core/util/theme.dart';
 import '../../home/theme/home_theme.dart';
 import '../../utils/loading_widget.dart';
 import '../cubit/azkar_items_cubit.dart';
+import '../widget/azkar_language.dart';
 import '../cubit/azkar_categories_cubit.dart';
 import '../theme/azkar_theme.dart';
 
@@ -19,7 +21,7 @@ class AzkarItemsScreen extends StatelessWidget {
 
   final int chapterId;
   final String chapterTitle;
-  final Language language;
+  final AzkarLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +55,10 @@ class _AzkarItemsView extends StatelessWidget {
               state.chapterTitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AzkarTheme.primaryText(context),
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: appBarTitleTextStyle(
+                color: AzkarTheme.primaryText(context),
+                fontSize: 18.sp,
+              ),
             ),
           ),
           body: SafeArea(
@@ -99,6 +101,7 @@ class _AzkarItemsView extends StatelessWidget {
                       arabic: arabic,
                       translation: translation,
                       reference: reference,
+                      isUrdu: state.language == AzkarLanguage.ur,
                     );
                   },
                 );
@@ -116,11 +119,13 @@ class _AzkarItemCard extends StatelessWidget {
     required this.arabic,
     required this.translation,
     required this.reference,
+    required this.isUrdu,
   });
 
   final String arabic;
   final String translation;
   final String reference;
+  final bool isUrdu;
 
   @override
   Widget build(BuildContext context) {
@@ -158,8 +163,10 @@ class _AzkarItemCard extends StatelessWidget {
                           if (translation.isNotEmpty)
                             Text(
                               translation,
+                              textAlign: isUrdu ? TextAlign.right : null,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    height: 1.4,
+                                    fontFamily: isUrdu ? 'Jameel' : null,
+                                    height: isUrdu ? 1.6 : 1.4,
                                     color: AzkarTheme.primaryText(context),
                                   ),
                             ),

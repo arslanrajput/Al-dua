@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:muslim_data_flutter/muslim_data_flutter.dart';
-
 import '../../utils/bottom_sheet_select.dart';
 import '../theme/azkar_theme.dart';
 import 'azkar_language.dart';
@@ -13,8 +11,8 @@ class AzkarLanguageChip extends StatelessWidget {
     required this.onChanged,
   });
 
-  final Language language;
-  final ValueChanged<Language> onChanged;
+  final AzkarLanguage language;
+  final ValueChanged<AzkarLanguage> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,7 @@ class AzkarLanguageChip extends StatelessWidget {
         color: chipBg,
         borderRadius: BorderRadius.circular(12.r),
       ),
-      child: BottomSheetSelect<Language>(
+      child: BottomSheetSelect<AzkarLanguage>(
         dense: true,
         shrinkWrapWidth: true,
         label: '',

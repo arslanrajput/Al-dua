@@ -7,6 +7,7 @@ import '../../../../routes/routes.dart';
 import '../../../core/util/bloc/location/location_bloc.dart';
 import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/constants.dart';
+import '../../../core/util/theme.dart';
 import '../../error/widget/failure_widget.dart';
 import '../../home/theme/home_theme.dart';
 import '../../utils/loading_widget.dart';
@@ -27,10 +28,10 @@ class TimingScreenScaffold extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'Prayer Timing',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: HomeTheme.primaryText(context),
-              ),
+          style: appBarTitleTextStyle(
+            color: HomeTheme.primaryText(context),
+            fontSize: 20.sp,
+          ),
         ),
         iconTheme: IconThemeData(color: HomeTheme.primaryText(context)),
         actions: [

@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
 import '../repository/azkar_repository.dart';
+import '../widget/azkar_language.dart';
 
 enum AzkarLoadStatus { initial, loading, loaded, error }
 
 class AzkarCategoriesState extends Equatable {
   final AzkarLoadStatus status;
-  final Language language;
+  final AzkarLanguage language;
   final List<AzkarCategory> categories;
   final String? errorMessage;
 
@@ -21,13 +22,13 @@ class AzkarCategoriesState extends Equatable {
 
   factory AzkarCategoriesState.initial() => const AzkarCategoriesState(
         status: AzkarLoadStatus.initial,
-        language: Language.en,
+        language: AzkarLanguage.en,
         categories: [],
       );
 
   AzkarCategoriesState copyWith({
     AzkarLoadStatus? status,
-    Language? language,
+    AzkarLanguage? language,
     List<AzkarCategory>? categories,
     String? errorMessage,
   }) {
@@ -50,7 +51,7 @@ class AzkarCategoriesCubit extends Cubit<AzkarCategoriesState> {
 
   final AzkarRepository _repository;
 
-  Future<void> load({Language? language}) async {
+  Future<void> load({AzkarLanguage? language}) async {
     final nextLanguage = language ?? state.language;
     emit(state.copyWith(
       status: AzkarLoadStatus.loading,

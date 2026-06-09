@@ -1,30 +1,92 @@
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
-const List<Language> azkarSupportedLanguages = [
-  Language.en,
-  Language.ar,
-  Language.ckb,
-  Language.ckbBadini,
-  Language.fa,
-  Language.ru,
+
+
+/// Azkar UI languages. Urdu uses a bundled JSON overlay (not in muslim_data DB).
+
+enum AzkarLanguage {
+
+  en('en', Language.en),
+
+  ur('ur', null),
+
+  ar('ar', Language.ar),
+
+  fa('fa', Language.fa),
+
+  ckb('ckb', Language.ckb),
+
+  ckbBadini('ckb_BADINI', Language.ckbBadini),
+
+  ru('ru', Language.ru);
+
+
+
+  const AzkarLanguage(this.dbCode, this.packageLanguage);
+
+
+
+  final String dbCode;
+
+  final Language? packageLanguage;
+
+}
+
+
+
+const List<AzkarLanguage> azkarSupportedLanguages = [
+
+  AzkarLanguage.en,
+
+  AzkarLanguage.ur,
+
+  AzkarLanguage.ar,
+
+  AzkarLanguage.fa,
+
+  AzkarLanguage.ckb,
+
+  AzkarLanguage.ckbBadini,
+
+  AzkarLanguage.ru,
+
 ];
 
-String azkarLanguageLabel(Language language) {
+
+
+String azkarLanguageLabel(AzkarLanguage language) {
+
   switch (language) {
-    case Language.en:
+
+    case AzkarLanguage.en:
+
       return 'English';
-    case Language.ar:
+
+    case AzkarLanguage.ur:
+
+      return 'Urdu';
+
+    case AzkarLanguage.ar:
+
       return 'Arabic';
-    case Language.ckb:
-      return 'Kurdish (Sorani)';
-    case Language.ckbBadini:
-      return 'Kurdish (Badini)';
-    case Language.fa:
+
+    case AzkarLanguage.fa:
+
       return 'Persian';
-    case Language.ru:
+
+    case AzkarLanguage.ckb:
+
+      return 'Kurdish (Sorani)';
+
+    case AzkarLanguage.ckbBadini:
+
+      return 'Kurdish (Badini)';
+
+    case AzkarLanguage.ru:
+
       return 'Russian';
-    default:
-      return language.name.toUpperCase();
+
   }
+
 }
 

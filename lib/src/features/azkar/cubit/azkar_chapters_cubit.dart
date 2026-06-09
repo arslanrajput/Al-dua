@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
 import '../repository/azkar_repository.dart';
+import '../widget/azkar_language.dart';
 import 'azkar_categories_cubit.dart';
 
 class AzkarChaptersState extends Equatable {
   final AzkarLoadStatus status;
-  final Language language;
+  final AzkarLanguage language;
   final int categoryId;
   final String categoryTitle;
   final List<AzkarChapter> chapters;
@@ -25,7 +26,7 @@ class AzkarChaptersState extends Equatable {
   factory AzkarChaptersState.initial({
     required int categoryId,
     required String categoryTitle,
-    required Language language,
+    required AzkarLanguage language,
   }) =>
       AzkarChaptersState(
         status: AzkarLoadStatus.initial,
@@ -37,7 +38,7 @@ class AzkarChaptersState extends Equatable {
 
   AzkarChaptersState copyWith({
     AzkarLoadStatus? status,
-    Language? language,
+    AzkarLanguage? language,
     List<AzkarChapter>? chapters,
     String? errorMessage,
   }) {
@@ -66,7 +67,7 @@ class AzkarChaptersCubit extends Cubit<AzkarChaptersState> {
   AzkarChaptersCubit({
     required int categoryId,
     required String categoryTitle,
-    required Language language,
+    required AzkarLanguage language,
     AzkarRepository? repository,
   })  : _repository = repository ?? AzkarRepository(),
         super(

@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
 import '../../../core/util/constants.dart';
+import '../../../core/util/theme.dart';
 import '../../home/theme/home_theme.dart';
 import '../../utils/loading_widget.dart';
 import '../cubit/azkar_chapters_cubit.dart';
 import '../cubit/azkar_categories_cubit.dart';
 import '../theme/azkar_theme.dart';
+import '../widget/azkar_language.dart';
 import 'azkar_items_screen.dart';
 
 class AzkarChaptersScreen extends StatelessWidget {
@@ -21,7 +23,7 @@ class AzkarChaptersScreen extends StatelessWidget {
 
   final int categoryId;
   final String categoryTitle;
-  final Language language;
+  final AzkarLanguage language;
 
   @override
   Widget build(BuildContext context) {
@@ -55,10 +57,10 @@ class _AzkarChaptersView extends StatelessWidget {
               state.categoryTitle,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AzkarTheme.primaryText(context),
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: appBarTitleTextStyle(
+                color: AzkarTheme.primaryText(context),
+                fontSize: 18.sp,
+              ),
             ),
           ),
           body: SafeArea(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
+import '../../../core/util/theme.dart';
 import '../../home/theme/home_theme.dart';
 import '../../utils/loading_widget.dart';
 import '../cubit/azkar_categories_cubit.dart';
@@ -71,10 +72,10 @@ class _AzkarViewState extends State<_AzkarView> {
             actions: const [],
             title: Text(
               'Azkars',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: HomeTheme.primaryText(context),
-                  ),
+              style: appBarTitleTextStyle(
+                color: HomeTheme.primaryText(context),
+                fontSize: 20.sp,
+              ),
             ),
             iconTheme: IconThemeData(color: HomeTheme.primaryText(context)),
           ),
@@ -87,7 +88,7 @@ class _AzkarViewState extends State<_AzkarView> {
   Widget _buildBody(
     BuildContext context,
     AzkarCategoriesState state,
-    Language language,
+    AzkarLanguage language,
   ) {
     if (state.status == AzkarLoadStatus.loading ||
         state.status == AzkarLoadStatus.initial) {
