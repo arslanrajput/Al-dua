@@ -6,8 +6,8 @@
       <stop offset="1" stop-color="#0359B8"/>
     </linearGradient>
     <linearGradient id="paint1_linear" x1="12.5046" y1="9.00795" x2="15.6462" y2="18.335" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFC909"/>
-      <stop offset="1" stop-color="#C49B06"/>
+      <stop stop-color="#FDD65A"/>
+      <stop offset="1" stop-color="#FDD65A"/>
     </linearGradient>
   </defs>
   <path d="M12.1406 19.9688C16.5675 19.9688 20.1562 16.38 20.1562 11.9531C20.1562 7.52622 16.5675 3.9375 12.1406 3.9375C7.71372 3.9375 4.125 7.52622 4.125 11.9531C4.125 16.38 7.71372 19.9688 12.1406 19.9688Z" fill="url(#paint0_linear)"/>

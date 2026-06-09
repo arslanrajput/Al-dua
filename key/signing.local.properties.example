@@ -1,0 +1,4 @@
+# Copy to signing.local.properties (gitignored) with your real keystore credentials.
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=YOUR_KEY_ALIAS

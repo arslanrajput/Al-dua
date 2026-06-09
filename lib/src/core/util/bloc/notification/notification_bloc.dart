@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -11,27 +9,17 @@ part 'notification_state.dart';
 
 class NotificationBloc
     extends HydratedBloc<NotificationEvent, NotificationState> {
-  NotificationBloc()
-      : super(NotificationState(
-          Platform.isIOS ? PermissionStatus.denied : PermissionStatus.granted,
-        )) {
+  NotificationBloc() : super(const NotificationState(PermissionStatus.denied)) {
     on<NotificationEvent>((event, emit) async {
-      if (event is UpdateNotification) {
-        if (Platform.isIOS) {
-          final permission = await Permission.notification.status;
-          if (permission.isGranted && state.status.isRestricted) {
-            emit(const NotificationState(PermissionStatus.restricted));
-          } else {
-            emit(NotificationState(permission));
-          }
-        }
-      }
-      if (event is ToggleNotification) {
-        if (state.status == PermissionStatus.denied) {
-          final permission = await Permission.notification.request();
-          emit(NotificationState(permission));
-        } else if (state.status == PermissionStatus.permanentlyDenied) {
-          emit(const NotificationState(PermissionStatus.permanentlyDenied));
+      if (event is SyncNotificationPermission) {
+        await _emitFromOsPermission(emit);
+      } else if (event is UpdateNotification) {
+        await _emitFromOsPermission(emit);
+      } else if (event is ToggleNotification) {
+        if (state.status == PermissionStatus.denied ||
+            state.status == PermissionStatus.permanentlyDenied) {
+          await NotificationService().ensureReady();
+          await _emitFromOsPermission(emit);
         } else if (state.status == PermissionStatus.restricted) {
           emit(const NotificationState(PermissionStatus.granted));
         } else if (state.status == PermissionStatus.granted) {
@@ -40,6 +28,23 @@ class NotificationBloc
         }
       }
     });
+  }
+
+  Future<void> _emitFromOsPermission(
+    Emitter<NotificationState> emit,
+  ) async {
+    if (state.status == PermissionStatus.restricted) {
+      return;
+    }
+
+    final osStatus = await Permission.notification.status;
+    if (osStatus.isGranted) {
+      emit(const NotificationState(PermissionStatus.granted));
+    } else if (osStatus.isPermanentlyDenied) {
+      emit(const NotificationState(PermissionStatus.permanentlyDenied));
+    } else {
+      emit(const NotificationState(PermissionStatus.denied));
+    }
   }
 
   @override
@@ -59,12 +64,11 @@ class NotificationBloc
         case 4:
           status = PermissionStatus.restricted;
           break;
-
         default:
           status = PermissionStatus.denied;
       }
       return NotificationState(status);
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }
@@ -89,10 +93,8 @@ class NotificationBloc
         default:
           value = 0;
       }
-      return {
-        'status': value,
-      };
-    } catch (e) {
+      return {'status': value};
+    } catch (_) {
       return null;
     }
   }

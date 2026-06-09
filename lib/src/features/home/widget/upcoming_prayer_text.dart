@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/model/timing.dart';
+import '../theme/home_theme.dart';
 
 class _NextPrayerInfo {
   final String name;
@@ -47,25 +48,19 @@ class _UpcomingPrayerTextState extends State<UpcomingPrayerText> {
   }
 
   static String _formatDuration(Duration d) {
-    if (d.isNegative) return '0 minutes';
-    if (d.inMinutes < 1) return 'less than a minute';
-    if (d.inMinutes < 60) {
-      final mins = d.inMinutes;
-      return '$mins ${mins == 1 ? 'minute' : 'minutes'}';
-    }
+    if (d.isNegative) return '0m';
+    if (d.inMinutes < 1) return '< 1m';
+    if (d.inMinutes < 60) return '${d.inMinutes}m';
     final h = d.inHours;
     final mins = d.inMinutes.remainder(60);
-    if (mins == 0) {
-      return '$h ${h == 1 ? 'hour' : 'hours'}';
-    }
-    return '$h ${h == 1 ? 'hour' : 'hours'} $mins ${mins == 1 ? 'minute' : 'minutes'}';
+    if (mins == 0) return '${h}h';
+    return '${h}h ${mins}m';
   }
 
   static _NextPrayerInfo? _nextPrayer(Timings t) {
     final now = DateTime.now();
     final items = <MapEntry<String, String>>[
       MapEntry('Fajr', t.fajr),
-      MapEntry('Sunrise', t.sunrise),
       MapEntry('Dhuhr', t.dhuhr),
       MapEntry('Asr', t.asr),
       MapEntry('Maghrib', t.maghrib),
@@ -86,8 +81,6 @@ class _UpcomingPrayerTextState extends State<UpcomingPrayerText> {
     return _NextPrayerInfo('Fajr', tomorrowFajr.difference(now));
   }
 
-  static const _gold = Color(0xFFFFE082);
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TimingBloc, TimingState>(
@@ -101,30 +94,25 @@ class _UpcomingPrayerTextState extends State<UpcomingPrayerText> {
         }
 
         final durationStr = _formatDuration(next.remaining);
-        final baseStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white,
-              fontSize: 14.sp,
-              height: 1.25,
-            );
 
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text.rich(
-            TextSpan(
-              style: baseStyle,
-              children: [
-                TextSpan(text: '${next.name} is only away from '),
-                TextSpan(
-                  text: durationStr,
-                  style: baseStyle?.copyWith(
-                    color: _gold,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
+        return Text.rich(
+          TextSpan(
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.85),
+              fontSize: 14.sp,
             ),
-            textAlign: TextAlign.center,
+            children: [
+              TextSpan(text: '${next.name} in '),
+              TextSpan(
+                text: durationStr,
+                style: const TextStyle(
+                  color: HomeTheme.accentBright,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
+          textAlign: TextAlign.center,
         );
       },
     );

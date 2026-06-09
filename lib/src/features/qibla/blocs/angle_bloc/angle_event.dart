@@ -4,14 +4,16 @@ abstract class AngleEvent extends Equatable {
   const AngleEvent();
 }
 
-class SetMagnetometerValue extends AngleEvent {
-  final List<MagnetometerEvent> events;
-  const SetMagnetometerValue(this.events);
+class SetCompassHeading extends AngleEvent {
+  final double heading;
+
+  const SetCompassHeading(this.heading);
+
   @override
-  List<Object> get props => [events];
+  List<Object> get props => [heading];
 }
 
 class NotifyFailure extends AngleEvent {
   @override
-  List<Object> get props => [events];
+  List<Object> get props => [];
 }

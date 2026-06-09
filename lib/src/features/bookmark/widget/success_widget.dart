@@ -35,7 +35,7 @@ class SuccessWidget extends StatelessWidget {
                         ),
                         CategoryTitle(
                           'Quran',
-                          'assets/images/collection_icon/svg/quran.svg',
+                          'assets/images/collection_icon/svg/quran_up.svg',
                         ),
                         SizedBox(
                           height: 8.h,

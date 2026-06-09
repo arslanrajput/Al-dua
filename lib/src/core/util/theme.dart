@@ -7,6 +7,19 @@ import 'constants.dart';
 
 enum AppTheme { dark, light }
 
+/// AppBar titles use Poppins app-wide.
+TextStyle appBarTitleTextStyle({
+  required Color color,
+  double? fontSize,
+  FontWeight fontWeight = FontWeight.w700,
+}) {
+  return GoogleFonts.poppins(
+    fontSize: fontSize ?? 16.sp,
+    fontWeight: fontWeight,
+    color: color,
+  );
+}
+
 final Map<AppTheme, ThemeData> kAppThemeData = {
   AppTheme.dark: ThemeData.dark().copyWith(
     primaryColor: kDarkPrimary,
@@ -59,6 +72,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         elevation: WidgetStateProperty.all(0),
+        backgroundColor: WidgetStateProperty.all(kDarkPrimary),
         minimumSize: WidgetStateProperty.all(
           Size(double.infinity, 56.h),
         ),
@@ -108,11 +122,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
       iconTheme: IconThemeData(
         color: kDarkTextColor,
       ),
-      titleTextStyle: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.bold,
-        color: kDarkTextColor,
-      ),
+      titleTextStyle: appBarTitleTextStyle(color: kDarkTextColor),
     ),
     colorScheme: ColorScheme.dark()
         .copyWith(
@@ -176,6 +186,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         elevation: WidgetStateProperty.all(5),
+        backgroundColor: WidgetStateProperty.all(kLightPrimary),
         minimumSize: WidgetStateProperty.all(
           Size(double.infinity, 56.h),
         ),
@@ -183,7 +194,7 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
           const StadiumBorder(),
         ),
         foregroundColor: WidgetStateProperty.all(
-          kDarkTextColor,
+          Colors.white,
         ),
         textStyle: WidgetStateProperty.all(
           TextStyle(
@@ -209,12 +220,9 @@ final Map<AppTheme, ThemeData> kAppThemeData = {
       elevation: 0,
       centerTitle: true,
       scrolledUnderElevation: 0,
-      backgroundColor: kDarkTextColor,
-      titleTextStyle: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.bold,
-        color: kLightTextColor,
-      ),
+      backgroundColor: kLightBg,
+      iconTheme: IconThemeData(color: kLightTextColor),
+      titleTextStyle: appBarTitleTextStyle(color: kLightTextColor),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: kLightBg,

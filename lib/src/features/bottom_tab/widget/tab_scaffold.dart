@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../../core/util/bloc/location/location_bloc.dart';
 import '../../../core/util/bloc/notification/notification_bloc.dart';
+import '../../../core/util/bloc/prayer_notification/prayer_notification_bloc.dart';
 import '../../../core/util/bloc/prayer_time_config/prayer_time_config_bloc.dart';
 import '../../../core/util/bloc/prayer_timing_bloc/timing_bloc.dart';
 import '../../../core/util/bloc/quran_audio/quran_audio_bloc.dart';
@@ -25,7 +26,7 @@ class _TabScaffoldState extends State<TabScaffold> {
   int _currentTabIndex = 0;
 
   bool _effectiveSolidForTab(int tabIndex) {
-    if (tabIndex == 0 || tabIndex == 4) return _solidStatusBar;
+    if (tabIndex == 0 || tabIndex == 3) return _solidStatusBar;
     return true;
   }
 
@@ -53,24 +54,28 @@ class _TabScaffoldState extends State<TabScaffold> {
     required double pixels,
   }) {
     if (tabIndex == 0) return pixels > 0.2.sh;
-    if (tabIndex == 4) return pixels > 40.h;
+    if (tabIndex == 3) return pixels > 40.h;
     return true;
   }
 
-  @override
-  void didChangeDependencies() {
+  void _requestPrayerTimings() {
     final prayerConfig = BlocProvider.of<PrayerTimeConfigBloc>(context).state;
     BlocProvider.of<TimingBloc>(context).add(
       RequestTiming(
         BlocProvider.of<NotificationBloc>(context).state.status,
+        BlocProvider.of<PrayerNotificationBloc>(context).state,
         BlocProvider.of<LocationBloc>(context).state,
         prayerConfig.method.id,
-        prayerConfig.school.id,
+        prayerConfig.madhab.schoolId,
         prayerConfig.dayOffset,
         prayerConfig.hijriAdjustmentDays,
       ),
     );
+  }
 
+  @override
+  void didChangeDependencies() {
+    _requestPrayerTimings();
     super.didChangeDependencies();
   }
 
@@ -104,7 +109,7 @@ class _TabScaffoldState extends State<TabScaffold> {
             listenWhen: (previous, current) => previous.index != current.index,
             listener: (context, tabState) {
               _currentTabIndex = tabState.index;
-              final nextSolid = (_currentTabIndex == 0 || _currentTabIndex == 4)
+              final nextSolid = (_currentTabIndex == 0 || _currentTabIndex == 3)
                   ? _shouldUseSolidStatusBar(
                       tabIndex: _currentTabIndex,
                       pixels: 0,
@@ -113,7 +118,7 @@ class _TabScaffoldState extends State<TabScaffold> {
               if (nextSolid != _solidStatusBar) {
                 setState(() => _solidStatusBar = nextSolid);
               }
-              if (tabState.index != 2) {
+              if (tabState.index != 1) {
                 BlocProvider.of<QuranAudioBloc>(context)
                     .add(const StopAudio());
               }

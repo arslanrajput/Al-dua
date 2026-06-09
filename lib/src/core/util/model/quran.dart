@@ -196,4 +196,13 @@ class Qurans {
           .toList();
 
   List<Quran> get qurans => _qurans;
+
+  Quran? findByAyatId(int ayatId) {
+    for (final quran in _qurans) {
+      if (quran.ayatId == ayatId) {
+        return quran;
+      }
+    }
+    return null;
+  }
 }

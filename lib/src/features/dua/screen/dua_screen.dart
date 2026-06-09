@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/util/bloc/dua/dua_bloc.dart';
 import '../bloc/dropdown/dropdown_bloc.dart';
+import '../theme/dua_theme.dart';
 import '../widget/dua_category_card.dart';
 
 class DuaScreen extends StatelessWidget {
@@ -14,31 +15,33 @@ class DuaScreen extends StatelessWidget {
     return BlocBuilder<DuaBloc, DuaState>(
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: DuaTheme.background(context),
           appBar: AppBar(
-            title: Text('Dua'),
+            centerTitle: true,
+            backgroundColor: DuaTheme.background(context),
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            surfaceTintColor: Colors.transparent,
+            iconTheme: IconThemeData(color: DuaTheme.primaryText(context)),
+            title: Text('Dua', style: DuaTheme.appBarTitleStyle(context)),
           ),
           body: SafeArea(
             child: ListView.builder(
-                itemCount: state.duas.categorizedDuas.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: index == 0
-                        ? EdgeInsets.only(
-                            top: 16.h,
-                            bottom: 8.0.h,
-                          )
-                        : EdgeInsets.symmetric(
-                            vertical: 8.0.h,
-                          ),
-                    child: BlocProvider(
-                      create: (context) => DropdownBloc(),
-                      child: DuaCategoryCard(
-                        state.duas.categorizedDuasList[index],
-                        index + 1,
-                      ),
+              padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 20.h),
+              itemCount: state.duas.categorizedDuas.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 10.h),
+                  child: BlocProvider(
+                    create: (context) => DropdownBloc(),
+                    child: DuaCategoryCard(
+                      state.duas.categorizedDuasList[index],
+                      index + 1,
                     ),
-                  );
-                }),
+                  ),
+                );
+              },
+            ),
           ),
         );
       },

@@ -1,0 +1,8 @@
+name: remove_white_bg
+publish_to: none
+
+environment:
+  sdk: '>=2.18.2 <4.0.0'
+
+dependencies:
+  image: ^4.5.4

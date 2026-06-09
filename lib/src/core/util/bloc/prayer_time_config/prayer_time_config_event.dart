@@ -12,12 +12,12 @@ class SetPrayerTimeMethod extends PrayerTimeConfigEvent {
   List<Object> get props => [method];
 }
 
-class SetPrayerTimeSchool extends PrayerTimeConfigEvent {
-  final PrayerTimeSchool school;
-  const SetPrayerTimeSchool(this.school);
+class SetMadhab extends PrayerTimeConfigEvent {
+  final MadhabType madhab;
+  const SetMadhab(this.madhab);
 
   @override
-  List<Object> get props => [school];
+  List<Object> get props => [madhab];
 }
 
 class SetPrayerDayOffset extends PrayerTimeConfigEvent {

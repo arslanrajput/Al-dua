@@ -1,163 +1,264 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../azan/azan_audio_service.dart';
+import '../util/model/prayer_notification_id.dart';
 import 'receive_notification.dart';
 
-/// notification class for handling notification related logics;
-///
+@pragma('vm:entry-point')
+void onAzanNotificationBackground(NotificationResponse response) {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (response.payload == 'azan_play') {
+    AzanAudioService.instance.play();
+  }
+}
+
+/// Handles local Azan / prayer-time notifications.
 class NotificationService {
   static final NotificationService _notificationService =
       NotificationService._internal();
 
-  /// initialize flutter local notification plugin
+  static const String _channelId = 'azan_prayer_channel_v2';
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// create stream to add notification class (defined)
   final BehaviorSubject<ReceivedNotification>
       didReceiveLocalNotificationSubject =
       BehaviorSubject<ReceivedNotification>();
 
-  /// create stream to add notification  (defined) ios<10+
   final BehaviorSubject<String?> selectNotificationSubject =
       BehaviorSubject<String?>();
 
-  factory NotificationService() {
-    return _notificationService;
-  }
+  factory NotificationService() => _notificationService;
 
   NotificationService._internal();
 
-  /// initialize this notification service
+  AndroidFlutterLocalNotificationsPlugin? get _androidPlugin =>
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
   Future<void> init() async {
-    /// use for schedule notification
     await _configureLocalTimeZone();
 
-    /// andriod local notification setting
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('ic_launcher');
-
-    /// Note: permissions aren't requested here just to demonstrate that can be
-    /// done later
-    /// ios local notification setting
-    /// [onDidRecieveLocalNotification] handler for clicking notification while in
-    /// app
-    final DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings(
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
-      // onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
     );
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS);
-
-    /// [onSelectNotification] handler for clicking notification while in
-    /// app ios<10+
     await flutterLocalNotificationsPlugin.initialize(
-      settings: initializationSettings,
-      // onDidReceiveBackgroundNotificationResponse: _onSelectNotification,
+      settings: const InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      ),
+      onDidReceiveNotificationResponse: _onNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse: onAzanNotificationBackground,
     );
 
+    await _createAndroidChannel();
     await checkNotification();
   }
 
-  /// add notification to the stream so other page can subscribe it
-  /// and get the notification
-  // Future _onDidReceiveLocalNotification(
-  //   int id,
-  //   String? title,
-  //   String? body,
-  //   String? payload,
-  // ) async {
-  //   didReceiveLocalNotificationSubject.add(
-  //     ReceivedNotification(
-  //       id: id,
-  //       title: title,
-  //       body: body,
-  //       payload: payload,
-  //     ),
-  //   );
-  // }
+  /// Whether Android will allow scheduling at the exact prayer minute.
+  Future<bool> canScheduleExactAlarms() async {
+    if (!Platform.isAndroid) return true;
+    try {
+      return await _androidPlugin?.canScheduleExactNotifications() ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
 
-  /// add notification to the stream so other page can subscribe it
-  /// and get the notification
-  // Future _onSelectNotification(String? payload) async {
-  //   selectNotificationSubject.add(payload);
-  // }
+  /// Opens the system screen to allow "Alarms & reminders" / exact alarms.
+  Future<void> openExactAlarmSettings() async {
+    if (!Platform.isAndroid) return;
+    try {
+      await _androidPlugin?.requestExactAlarmsPermission();
+    } catch (e) {
+      log('openExactAlarmSettings: $e');
+    }
+    try {
+      await Permission.scheduleExactAlarm.request();
+    } catch (_) {}
+  }
+
+  /// Requests OS permissions and prepares the notification channel.
+  Future<bool> ensureReady() async {
+    if (Platform.isAndroid) {
+      final notifGranted =
+          await _androidPlugin?.requestNotificationsPermission() ?? false;
+      await openExactAlarmSettings();
+      await _createAndroidChannel();
+      if (!notifGranted) {
+        final status = await Permission.notification.status;
+        return status.isGranted;
+      }
+      return true;
+    }
+
+    if (Platform.isIOS) {
+      final iosPlugin = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      final granted = await iosPlugin?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+          false;
+      return granted;
+    }
+
+    return true;
+  }
+
+  Future<void> _createAndroidChannel() async {
+    if (!Platform.isAndroid) return;
+
+    const channel = AndroidNotificationChannel(
+      _channelId,
+      'Azan Prayer Times',
+      description: 'Daily prayer time reminders with Azan',
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+      sound: null,
+    );
+
+    await _androidPlugin?.createNotificationChannel(channel);
+  }
+
+  void _onNotificationResponse(NotificationResponse response) {
+    if (response.payload == 'azan_play') {
+      AzanAudioService.instance.play();
+    }
+  }
 
   Future<void> _configureLocalTimeZone() async {
     tz.initializeTimeZones();
+    try {
+      final timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
+    } on MissingPluginException catch (e) {
+      log('FlutterTimezone unavailable, using device offset fallback: $e');
+      _setLocalTimeZoneFromDeviceOffset();
+    } catch (e) {
+      log('Timezone setup failed, using UTC: $e');
+      tz.setLocalLocation(tz.UTC);
+    }
+  }
 
-    final timeZoneInfo = await FlutterTimezone.getLocalTimezone();
-
-    tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
+  void _setLocalTimeZoneFromDeviceOffset() {
+    final offset = DateTime.now().timeZoneOffset;
+    final hours = offset.inHours;
+    final name = hours >= 0 ? 'Etc/GMT-${hours.abs()}' : 'Etc/GMT+${hours.abs()}';
+    try {
+      tz.setLocalLocation(tz.getLocation(name));
+    } catch (_) {
+      tz.setLocalLocation(tz.UTC);
+    }
   }
 
   Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  /// notification for prayer timing notification. Called when user request new
-  /// prayer timing from api
-  Future<void> showPrayerNotification(
-      {required int id,
-      required String title,
-      required String body,
-      required Duration duration}) async {
-    /// android customisation notification
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      '1',
-      'Prayer Timing',
-      // 'Notification to tell user that it is time for Muslim prayer.',
+  Future<void> cancelPrayerNotifications() async {
+    for (final prayer in PrayerNotificationId.values) {
+      await flutterLocalNotificationsPlugin.cancel(id: prayer.id);
+    }
+  }
+
+  Future<void> schedulePrayerNotification({
+    required int id,
+    required String title,
+    required String body,
+    required tz.TZDateTime scheduledTime,
+    required bool playAzanSound,
+  }) async {
+    final androidDetails = AndroidNotificationDetails(
+      _channelId,
+      'Azan Prayer Times',
+      channelDescription: 'Notifications when it is time for prayer.',
       importance: Importance.max,
-      //icon:
-      sound: RawResourceAndroidNotificationSound('slow_spring_board'),
-      // when:
-      ticker: 'Prayer Timing',
+      priority: Priority.high,
+      playSound: playAzanSound,
+      enableVibration: true,
+      ticker: 'Azan Time',
       visibility: NotificationVisibility.public,
-      category: AndroidNotificationCategory.reminder,
+      category: AndroidNotificationCategory.alarm,
+      audioAttributesUsage: AudioAttributesUsage.alarm,
     );
 
-    /// ios customisation notification
-
-    DarwinNotificationDetails iosPlatformChannelSpecifics =
-        DarwinNotificationDetails(
-      sound: 'slow_spring_board.aiff',
+    final iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentSound: playAzanSound,
+      presentBadge: true,
     );
 
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iosPlatformChannelSpecifics,
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
     );
 
-    /// scheduled notification function
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    final useExact = await canScheduleExactAlarms();
+    final scheduleMode = useExact
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
+
+    try {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
         id: id,
         title: title,
         body: body,
-      scheduledDate:   tz.TZDateTime.now(tz.local).add(duration),
-        notificationDetails: platformChannelSpecifics,
-        // uiLocalNotificationDateInterpretation:
-        //     UILocalNotificationDateInterpretation.absoluteTime,
-        // androidAllowWhileIdle: true,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        scheduledDate: scheduledTime,
+        notificationDetails: details,
+        androidScheduleMode: scheduleMode,
         matchDateTimeComponents: DateTimeComponents.time,
-        payload: '');
+        payload: playAzanSound ? 'azan_play' : 'azan_silent',
+      );
+      log(
+        'Scheduled prayer $id at $scheduledTime '
+        '(${useExact ? "exact" : "inexact"} alarm)',
+      );
+    } catch (e, st) {
+      log('Exact schedule failed for $id, retrying inexact: $e');
+      try {
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: scheduledTime,
+          notificationDetails: details,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          matchDateTimeComponents: DateTimeComponents.time,
+          payload: playAzanSound ? 'azan_play' : 'azan_silent',
+        );
+        log('Scheduled prayer $id (inexact fallback)');
+      } catch (e2, st2) {
+        log('Failed to schedule prayer $id: $e2', stackTrace: st2);
+      }
+    }
   }
 
   Future<void> checkNotification() async {
-    final available =
+    final pending =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-    log(available.length.toString());
+    log('Pending notifications: ${pending.length}');
+    for (final n in pending) {
+      log('  id=${n.id} title=${n.title} body=${n.body}');
+    }
   }
 }

@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muslim_data_flutter/muslim_data_flutter.dart';
 
 import '../repository/azkar_repository.dart';
+import '../widget/azkar_language.dart';
 import 'azkar_categories_cubit.dart';
 
 class AzkarItemsState extends Equatable {
   final AzkarLoadStatus status;
-  final Language language;
+  final AzkarLanguage language;
   final int chapterId;
   final String chapterTitle;
   final List<AzkarItem> items;
@@ -25,7 +26,7 @@ class AzkarItemsState extends Equatable {
   factory AzkarItemsState.initial({
     required int chapterId,
     required String chapterTitle,
-    required Language language,
+    required AzkarLanguage language,
   }) =>
       AzkarItemsState(
         status: AzkarLoadStatus.initial,
@@ -59,7 +60,7 @@ class AzkarItemsCubit extends Cubit<AzkarItemsState> {
   AzkarItemsCubit({
     required int chapterId,
     required String chapterTitle,
-    required Language language,
+    required AzkarLanguage language,
     AzkarRepository? repository,
   })  : _repository = repository ?? AzkarRepository(),
         super(

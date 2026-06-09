@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../utils/sirat_card.dart';
 import '../model/social_media.dart';
+import '../theme/setting_theme.dart';
 import 'social_media_button.dart';
 
 class SocialMediaCard extends StatelessWidget {
@@ -10,88 +10,21 @@ class SocialMediaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SiratCard(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Connect',
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          SizedBox(height: 8.h),
+          Text('Connect', style: SettingTheme.sectionTitleStyle(context)),
+          SizedBox(height: 12.h),
           Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: socialMediaList.length >= 3
-                  ? List.generate(
-                      3,
-                      (index) {
-                        return Expanded(
-                          child: SocialMediaButton(
-                            socialMediaList[index],
-                          ),
-                        );
-                      },
-                    )
-                  : [
-                      ...List.generate(
-                        socialMediaList.length,
-                        (index) {
-                          return Expanded(
-                            child: SocialMediaButton(
-                              socialMediaList[index],
-                            ),
-                          );
-                        },
-                      ),
-                      ...List.generate(
-                        3 - socialMediaList.length,
-                        (index) {
-                          return Expanded(
-                            child: Container(),
-                          );
-                        },
-                      ),
-                    ]),
-          if (socialMediaList.length > 3)
-            SizedBox(
-              height: 16.h,
-            ),
-          if (socialMediaList.length > 3)
-            Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: socialMediaList.length >= 6
-                    ? List.generate(
-                        3,
-                        (index) {
-                          return Expanded(
-                            child: SocialMediaButton(
-                              socialMediaList[index + 3],
-                            ),
-                          );
-                        },
-                      )
-                    : [
-                        ...List.generate(
-                          socialMediaList.length - 3,
-                          (index) {
-                            return Expanded(
-                              child: SocialMediaButton(
-                                socialMediaList[index + 3],
-                              ),
-                            );
-                          },
-                        ),
-                        ...List.generate(
-                          6 - socialMediaList.length,
-                          (index) {
-                            return Expanded(
-                              child: Container(),
-                            );
-                          },
-                        ),
-                      ])
+            children: [
+              for (var i = 0; i < socialMediaList.length; i++) ...[
+                if (i > 0) SizedBox(width: 8.w),
+                SocialMediaButton(socialMediaList[i]),
+              ],
+            ],
+          ),
         ],
       ),
     );
